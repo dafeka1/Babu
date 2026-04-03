@@ -1,5 +1,4 @@
 const mineflayer = require('mineflayer')
-const autome = require('mineflayer-auto-auth')
 
 function createBot() {
   const bot = mineflayer.createBot({
@@ -9,22 +8,30 @@ function createBot() {
     auth: 'offline'
   })
 
-  // This one line replaces all your manual /login and /register detection
-  autome(bot, 'MisuBabu@3939')
+  bot.on('message', (jsonMsg) => {
+    const message = jsonMsg.toString()
+    console.log('Server says:', message)
+
+    // Manual Auth for Babu3090
+    if (message.includes('/register') || message.includes('register')) {
+      bot.chat('/register MisuBabu@3939 MisuBabu@3939')
+    }
+    if (message.includes('/login') || message.includes('login')) {
+      bot.chat('/login MisuBabu@3939')
+    }
+  })
 
   bot.on('spawn', () => {
-    console.log('Babu3090 is online and authenticated!')
+    console.log('Babu3090 is in! Waiting for auth...')
     bot.physics.enabled = false
   })
 
-  bot.on('kicked', (reason) => console.log('Kicked:', JSON.stringify(reason)))
-  bot.on('error', (err) => console.log('Error:', err))
-
-  // Reconnect logic
   bot.on('end', () => {
-    console.log('Disconnected. Reconnecting in 60s...')
+    console.log('Disconnected. Reconnecting in 1 minute...')
     setTimeout(createBot, 60000)
   })
+
+  bot.on('error', (err) => console.log('Error:', err))
 }
 
 createBot()
